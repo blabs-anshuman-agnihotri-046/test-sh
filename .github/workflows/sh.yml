@@ -1,0 +1,31 @@
+name: Run Shell Script on Merge with Label
+
+on:
+  pull_request:
+    types: [closed] # Trigger when the PR is closed (which includes when it's merged)
+    branches:
+      - main # Only trigger if it's merged into main
+
+jobs:
+  run-script-on-label:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'testbranch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for specific label
+        id: label-check
+        run: |
+          labels=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels \
+            | jq '.[].name')
+          echo "Labels: $labels"
+          if [[ $labels != *"your-label"* ]]; then
+            echo "Label not found, exiting."
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Execute Shell Script
+        run: ./your-script.sh
