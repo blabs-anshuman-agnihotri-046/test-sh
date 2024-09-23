@@ -8,7 +8,7 @@ on:
 jobs:
   run-script-on-label:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Check for 'release' label
