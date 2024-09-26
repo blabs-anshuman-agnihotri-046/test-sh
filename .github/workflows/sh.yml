@@ -5,6 +5,7 @@ on:
     types: [closed]
     branches:
       - main 
+  workflow_dispatch:
 jobs:
   run-script-on-label:
     if: github.event.pull_request.merged == true
